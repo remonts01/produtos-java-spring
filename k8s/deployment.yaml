@@ -1,0 +1,93 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+        - env:
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              value: pwd
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: user
+          image: mongo:5.0
+          name: mongo
+          ports:
+            - containerPort: 27017
+              hostPort: 27017
+              protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo
+spec:
+  ports:
+    - name: "27017"
+      port: 27017
+      targetPort: 27017
+  selector:
+    app: mongo
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: application
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: application
+  template:
+    metadata:
+      labels:
+        app: application
+    spec:
+      containers:
+        - env:
+            - name: ENV
+              value: LOCAL_DOCKER_COMPOSE
+            - name: MONGO_DB_DATABASE
+              value: Loja-Demo
+            - name: MONGO_DB_HOST
+              value: mongo
+            - name: MONGO_DB_PORT
+              value: "27017"
+            - name: MONGO_DB_PWD
+              value: pwd
+            - name: MONGO_DB_USER
+              value: user
+          image: fabricioveronez/exemplo-java:v1
+          name: produtos
+          ports:
+            - containerPort: 5001
+              hostPort: 5001
+              protocol: TCP
+            - containerPort: 5002
+              hostPort: 5002
+              protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: application
+spec:
+  ports:
+    - name: "5001"
+      port: 5001
+      targetPort: 5001
+      nodePort: 30000
+    - name: "5002"
+      port: 5002
+      targetPort: 5002
+  selector:
+    app: application
+  type: LoadBalancer
