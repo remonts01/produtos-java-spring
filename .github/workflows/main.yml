@@ -8,7 +8,15 @@ jobs:
   CI:
     runs-on: ubuntu-latest
     steps:
-      - name: Passo 01
-        run: echo "Construir a imagem da Aplicação"
+      - name: Build and push Docker images
+        uses: docker/build-push-action@v5.3.0
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: |
+            fabricioveronez/live-fernanda:${{ github.run_number }}
+            fabricioveronez/live-fernanda:latest
+            
       - name: Passo 02
         run: echo "Publicar a imagem no Docker Hub"
