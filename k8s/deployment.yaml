@@ -65,7 +65,7 @@ spec:
               value: pwd
             - name: MONGO_DB_USER
               value: user
-          image: fabricioveronez/exemplo-java:v1
+          image: fabricioveronez/live-fernanda:v1
           name: produtos
           ports:
             - containerPort: 5001
