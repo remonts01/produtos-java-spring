@@ -8,6 +8,13 @@ jobs:
   CI:
     runs-on: ubuntu-latest
     steps:
+      - name: Obter código
+        uses: actions/checkout@v4.1.3
+      - name: Autenticação no Docker
+        uses: docker/login-action@v3.1.0
+        with:
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PWD }}
       - name: Build and push Docker images
         uses: docker/build-push-action@v5.3.0
         with:
@@ -17,6 +24,3 @@ jobs:
           tags: |
             fabricioveronez/live-fernanda:${{ github.run_number }}
             fabricioveronez/live-fernanda:latest
-            
-      - name: Passo 02
-        run: echo "Publicar a imagem no Docker Hub"
