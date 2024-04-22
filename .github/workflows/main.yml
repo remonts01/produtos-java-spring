@@ -24,3 +24,26 @@ jobs:
           tags: |
             fabricioveronez/live-fernanda:${{ github.run_number }}
             fabricioveronez/live-fernanda:latest
+  CD:
+    needs: [CI]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Obter código
+        uses: actions/checkout@v4.1.3
+      - name: Configuração do Kubernetes
+        uses: Azure/k8s-set-context@v3.0
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.K8S_CONFIG }}
+                    
+      - name: Deploy to Kubernetes cluster          
+        uses: Azure/k8s-deploy@v5.0.0
+        with:
+          manifests: |
+            ./k8s/deployment.yaml
+          images: |
+            fabricioveronez/live-fernanda:${{ github.run_number }}
+              
+            
+      
+  
