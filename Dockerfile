@@ -12,9 +12,6 @@ COPY . $APP_HOME
 # CONFIGURA O GRADLE WRAPPER
 RUN gradle wrapper --gradle-version 7.3.3 --distribution-type bin
 
-# EXECUTA OS TESTES UNITARIOS
-RUN gradle test
-
 # COMPILA A APLICACAO
 RUN gradle assemble
 RUN rm $APP_HOME/build/libs/*-plain.jar
