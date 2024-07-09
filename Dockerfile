@@ -1,4 +1,4 @@
-#ESTAGIO DE COMPILACAO
+# ESTAGIO DE COMPILACAO
 FROM gradle:jdk17-alpine AS GRADLE_BUILD_IMAGE
 
 # DEFINE UMA PASTA QUE RECEBERA O CODIGO FONTE
@@ -9,15 +9,17 @@ WORKDIR $APP_HOME
 # COPIA O CODIGO FONTE PARA A PASTA CRIADA
 COPY . $APP_HOME
 
+# CONFIGURA O GRADLE WRAPPER
+RUN gradle wrapper --gradle-version 7.3.3 --distribution-type bin
 
+# EXECUTA OS TESTES UNITARIOS
+RUN gradle test
 
 # COMPILA A APLICACAO
-RUN gradle wrapper --gradle-version 7.3.3 --distribution-type bin
 RUN gradle assemble
 RUN rm $APP_HOME/build/libs/*-plain.jar
 
-
-#ESTAGIO DE EXECUCAO
+# ESTAGIO DE EXECUCAO
 FROM openjdk:17.0.1
 COPY --from=GRADLE_BUILD_IMAGE /app/src/build/libs/*.jar /app/produtos-java-spring.jar
 WORKDIR /app
